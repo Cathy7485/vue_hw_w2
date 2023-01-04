@@ -26,9 +26,10 @@
 								<input type="password" class="form-control" id="password" placeholder="Password" required>
 								<label for="password">Password</label>
 							</div>
-							<button class="btn btn-lg btn-primary w-100 mt-3" type="submit">
+							<button class="btn btn-lg btn-primary w-100 mt-3" id="login" type="button">
 								登入
-							</button>
+							</button> 
+							 <!-- button 要加上type="button" 不然會跳轉頁面！ -->
 						</form>
 					</div>
 				</div>
@@ -46,6 +47,44 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"
 			integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc"
 			crossorigin="anonymous"></script>
-		<script></script>
+		<script>
+			const signUrl = 'https://vue3-course-api.hexschool.io/v2/admin/signin'; // 站點
+			const path = 'kc777'; // API Path
+
+			const email = document.querySelector("#username");
+			const code = document.querySelector("#password");
+			const loginBtn = document.querySelector("#login");
+
+			loginBtn.addEventListener('click',login);
+
+			function login(){
+				const username = email.value;
+				const password = code.value;
+
+				// console.log(username, password);
+				//解構
+				const user = {
+					username,
+					password
+				}
+
+				//發送 API 至遠端並登入（並儲存 Token）
+				axios.post(`${signUrl}`,user)
+					// 成功結果
+					.then((res)=>{
+						const {token,expired} = res.data;
+						console.log(token, expired);
+						document.cookie = `hexToken=${token}; expires=${new Date(expired)};`; //hexToken是自定義名稱，expired要先轉型
+					})
+					.catch((error)=>{
+						console.dir(error); //使用console.dir可以展開，看到錯誤的詳細訊息
+					})
+				// 把token 夾帶到header裡
+				const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+				axios.defaults.headers.common['Authorization'] = token; //把token夾帶到headers裡
+			}
+			
+
+		</script>
 </body>
 </html>
