@@ -13,7 +13,7 @@
 		<div id="app">
 			<div class="container mt-5">
 				<div class="row justify-content-center">
-					<h1 class="h3 mb-3 font-weight-normal ">
+					<h1 class="h3 mb-3 font-weight-normal text-center">
 						請先登入
 					</h1>
 					<div class="col-12">
@@ -29,7 +29,7 @@
 							<button class="btn btn-lg btn-primary w-100 mt-3" id="login" type="button">
 								登入
 							</button> 
-							 <!-- button 要加上type="button" 不然會跳轉頁面！ -->
+							<!-- button 要加上type="button" 不然會跳轉頁面！ -->
 						</form>
 					</div>
 				</div>
@@ -60,14 +60,12 @@
 			function login(){
 				const username = email.value;
 				const password = code.value;
-
 				// console.log(username, password);
 				//解構
 				const user = {
 					username,
 					password
 				}
-
 				//發送 API 至遠端並登入（並儲存 Token）
 				axios.post(`${signUrl}`,user)
 					// 成功結果
@@ -75,16 +73,17 @@
 						const {token,expired} = res.data;
 						console.log(token, expired);
 						document.cookie = `hexToken=${token}; expires=${new Date(expired)};`; //hexToken是自定義名稱，expired要先轉型
+						axios.defaults.headers.common['Authorization'] = token; //每次都把token夾帶到headers裡
+						window.location = 'index.html';
 					})
 					.catch((error)=>{
 						console.dir(error); //使用console.dir可以展開，看到錯誤的詳細訊息
 					})
-				// 把token 夾帶到header裡
-				const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-				axios.defaults.headers.common['Authorization'] = token; //把token夾帶到headers裡
-			}
-			
 
+				// 儲存cookie
+				const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+				axios.defaults.headers.common['Authorization'] = token; //cookie有儲存時，每次都把token夾帶到headers裡
+			}
 		</script>
 </body>
 </html>
