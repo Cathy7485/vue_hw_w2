@@ -107,11 +107,11 @@
 					tempProduct: {}
 				};
 			},
+			//方法集合
 			methods: {
 				check(){
 					const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/, "$1"); //取得Token`,test2要改成hexToken
 					axios.defaults.headers.common['Authorization'] = token; // defaults = 每次都把token夾帶到headers裡
-
 					axios.post(`${url}api/user/check`)
 						.then((res)=>{
 							console.log(res.data);
@@ -126,7 +126,6 @@
 					axios.get(`${url}api/${api_path}/admin/products`)
 						.then((res)=>{
 							this.products = res.data.products;
-							console.log(res.data.products);
 						})
 						.catch((error)=>{
 							console.dir(error);
@@ -135,6 +134,7 @@
 
 				
 			},
+			//生命週期
 			mounted() {
 				this.check();
 				this.getProduct();
