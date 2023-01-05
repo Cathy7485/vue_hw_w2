@@ -19,14 +19,14 @@
 					<div class="col-12">
 						<form id="form" class="form-signin">
 							<div class="form-floating mb-3">
-								<input type="email" class="form-control" id="username" placeholder="name@example.com" required autofocus>
+								<input type="email" class="form-control" id="username" placeholder="name@example.com" required autofocus v-model="user.username">
 								<label for="username">Email address</label>
 							</div>
 							<div class="form-floating">
-								<input type="password" class="form-control" id="password" placeholder="Password" required>
+								<input type="password" class="form-control" id="password" placeholder="Password" required v-model="user.password">
 								<label for="password">Password</label>
 							</div>
-							<button class="btn btn-lg btn-primary w-100 mt-3" id="login" type="button">
+							<button class="btn btn-lg btn-primary w-100 mt-3" id="login" type="button" v-on:click="login">
 								登入
 							</button> 
 							<!-- button 要加上type="button" 不然會跳轉頁面！ -->
@@ -47,43 +47,53 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"
 			integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc"
 			crossorigin="anonymous"></script>
-		<script>
+		<script type="module"> //要記得加上 type="module"
+
 			const signUrl = 'https://vue3-course-api.hexschool.io/v2/admin/signin'; // 站點
 			const path = 'kc777'; // API Path
 
 			const email = document.querySelector("#username");
 			const code = document.querySelector("#password");
-			const loginBtn = document.querySelector("#login");
+			// const loginBtn = document.querySelector("#login");
 
-			loginBtn.addEventListener('click',login);
+			// loginBtn.addEventListener('click',login);
 
-			function login(){
-				const username = email.value;
-				const password = code.value;
-				// console.log(username, password);
-				//解構
-				const user = {
-					username,
-					password
-				}
-				//發送 API 至遠端並登入（並儲存 Token）
-				axios.post(`${signUrl}`,user)
-					// 成功結果
-					.then((res)=>{
-						const {token,expired} = res.data;
-						console.log(token, expired);
-						document.cookie = `hexToken=${token}; expires=${new Date(expired)};`; //hexToken是自定義名稱，expired要先轉型
-						axios.defaults.headers.common['Authorization'] = token; //每次都把token夾帶到headers裡
-						window.location = 'index.html';
-					})
-					.catch((error)=>{
-						console.dir(error); //使用console.dir可以展開，看到錯誤的詳細訊息
-					})
+			import { createApp } from "https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.45/vue.esm-browser.min.js";
+				// 1.建立元件
+				const app = {
+					//資料
+					data() {
+						return {
+							user: {
+								username: '',
+								password: ''
+							}
+						}
+					},
+					methods: {
+						login() {
+							//發送 API 至遠端並登入（並儲存 Token）
+							axios.post(`${signUrl}`, this.user)
+								// 成功結果
+								.then((res) => {
+									const { token, expired } = res.data;
+									console.log(token, expired);
+									document.cookie = `hexToken=${token}; expires=${new Date(expired)};`; //hexToken是自定義名稱，expired要先轉型
+									axios.defaults.headers.common['Authorization'] = token; //每次都把token夾帶到headers裡
+									window.location = 'index.html'; // 跳轉畫面
+								})
+								.catch((error) => {
+									console.dir(error); //使用console.dir可以展開，看到錯誤的詳細訊息
+								})
 
-				// 儲存cookie
-				const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-				axios.defaults.headers.common['Authorization'] = token; //cookie有儲存時，每次都把token夾帶到headers裡
-			}
+							// 儲存cookie
+							const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+							axios.defaults.headers.common['Authorization'] = token; //cookie有儲存時，每次都把token夾帶到headers裡
+						},
+					}
+				};
+				createApp(app) // 2.生成應用程式
+					.mount("#app"); // 3.渲染到畫面上
 		</script>
 </body>
 </html>
