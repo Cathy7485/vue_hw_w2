@@ -114,27 +114,29 @@
 					axios.defaults.headers.common['Authorization'] = token; // defaults = 每次都把token夾帶到headers裡
 					axios.post(`${url}api/user/check`)
 						.then((res)=>{
-							getProduct() {
-								axios.get(`${url}api/${api_path}/admin/products`)
-									.then((res) => {
-										this.products = res.data.products;
-									})
-									.catch((error) => {
-										console.dir(error);
-									})
-							}
+							this.getProduct();
 						})
 						.catch((error)=>{
-							alert(error.response.data.message);
+							console.dir(error);
 							alert("您無權限進入！");
 							window.location = 'login.html';
 						})
 				},
+				getProduct() {
+					axios.get(`${url}api/${api_path}/admin/products`)
+						.then((res)=>{
+							this.products = res.data.products;
+						})
+						.catch((error)=>{
+							console.dir(error);
+						})
+				}
+
+				
 			},
 			//生命週期
 			mounted() {
 				this.check();
-				this.getProduct();
 			}
 		};
 		createApp(app) // 2.生成應用程式
