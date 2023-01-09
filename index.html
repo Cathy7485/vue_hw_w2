@@ -80,7 +80,7 @@
 							<img v-bind:src="imgs" alt="key" class="images m-2">
 						</template>
 					</template>
-					<p class="text-secondary">請選擇一個商品查看</p>
+					<p class="text-secondary" v-else>請選擇一個商品查看</p>
 				</div>
 			</div>
 		</div>
@@ -114,25 +114,22 @@
 					axios.defaults.headers.common['Authorization'] = token; // defaults = 每次都把token夾帶到headers裡
 					axios.post(`${url}api/user/check`)
 						.then((res)=>{
-							console.log(res.data);
+							getProduct() {
+								axios.get(`${url}api/${api_path}/admin/products`)
+									.then((res) => {
+										this.products = res.data.products;
+									})
+									.catch((error) => {
+										console.dir(error);
+									})
+							}
 						})
 						.catch((error)=>{
-							console.dir(error);
+							alert(error.response.data.message);
 							alert("您無權限進入！");
 							window.location = 'login.html';
 						})
 				},
-				getProduct() {
-					axios.get(`${url}api/${api_path}/admin/products`)
-						.then((res)=>{
-							this.products = res.data.products;
-						})
-						.catch((error)=>{
-							console.dir(error);
-						})
-				}
-
-				
 			},
 			//生命週期
 			mounted() {

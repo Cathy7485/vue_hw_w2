@@ -54,10 +54,6 @@
 
 			const email = document.querySelector("#username");
 			const code = document.querySelector("#password");
-			// const loginBtn = document.querySelector("#login");
-
-			// loginBtn.addEventListener('click',login);
-
 			import { createApp } from "https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.45/vue.esm-browser.min.js";
 				// 1.建立元件
 				const app = {
@@ -82,12 +78,8 @@
 									window.location = 'index.html'; // 跳轉畫面
 								})
 								.catch((error) => {
-									console.dir(error); //使用console.dir可以展開，看到錯誤的詳細訊息
+									alert(error.response.data.message);
 								})
-
-							// 儲存cookie
-							const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-							axios.defaults.headers.common['Authorization'] = token; //cookie有儲存時，每次都把token夾帶到headers裡
 						},
 					}
 				};
